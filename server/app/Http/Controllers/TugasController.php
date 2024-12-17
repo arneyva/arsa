@@ -10,19 +10,20 @@ class TugasController extends BaseController
 {
     public function index(Request $request)
     {
-        try {
-            $user = auth()->user();
-            $tasks = Task::query()
-                ->when($user->role === 'user', function ($query) use ($user) {
-                    $query->where('user_id', $user->id);
-                })
-                ->filterStatus($request->status)
-                ->paginate(10);
-            // return $this->successResponse(new TaskResource($tasks));
-            // return response()->json($tasks);
-            return $this->successResponse(TaskResource::collection($tasks));
-        } catch (\Throwable $th) {
-        }
+        // try {
+        $user = auth()->user();
+        $tasks = Task::query()
+            ->when($user->role === 'user', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->filterStatus($request->status)
+            ->paginate();
+        // return $this->successResponse(new TaskResource($tasks));
+        return $this->successResponse(TaskResource::paginate($tasks), 'Data found');
+        // return response()->json($tasks);
+        // return $this->successResponse(TaskResource::collection($tasks));
+        // } catch (\Throwable $th) {
+        // }
     }
 
     public function store(Request $request)
